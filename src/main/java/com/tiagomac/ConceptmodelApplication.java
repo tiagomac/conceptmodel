@@ -13,6 +13,7 @@ import com.tiagomac.domain.Cidade;
 import com.tiagomac.domain.Cliente;
 import com.tiagomac.domain.Endereco;
 import com.tiagomac.domain.Estado;
+import com.tiagomac.domain.ItemPedido;
 import com.tiagomac.domain.Pagamento;
 import com.tiagomac.domain.PagamentoComBoleto;
 import com.tiagomac.domain.PagamentoComCartao;
@@ -25,6 +26,7 @@ import com.tiagomac.repositories.CidadeRepository;
 import com.tiagomac.repositories.ClienteRepository;
 import com.tiagomac.repositories.EnderecoRepository;
 import com.tiagomac.repositories.EstadoRepository;
+import com.tiagomac.repositories.ItemPedidoRepository;
 import com.tiagomac.repositories.PagamentoRepository;
 import com.tiagomac.repositories.PedidoRepository;
 import com.tiagomac.repositories.ProdutoRepository;
@@ -55,6 +57,9 @@ public class ConceptmodelApplication implements CommandLineRunner {
 	
 	@Autowired
 	private PagamentoRepository pagamentoRepository;
+	
+	@Autowired
+	private ItemPedidoRepository itemPedidoRepository;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(ConceptmodelApplication.class, args);
@@ -118,5 +123,17 @@ public class ConceptmodelApplication implements CommandLineRunner {
 		pedidoRepository.saveAll(Arrays.asList(ped1, ped2));
 		pagamentoRepository.saveAll(Arrays.asList(pagto1, pagto2));
 		
+		ItemPedido ip1 = new ItemPedido(ped1, p1, 0.00, 1, 2000.00);
+		ItemPedido ip2 = new ItemPedido(ped1, p3, 0.00, 2, 80.00);
+		ItemPedido ip3 = new ItemPedido(ped2, p2, 100.00, 1, 800.00);
+		
+		ped1.getItens().addAll(Arrays.asList(ip1, ip2));
+		ped2.getItens().addAll(Arrays.asList(ip3));
+		
+		p1.getItens().addAll(Arrays.asList(ip1));
+		p2.getItens().addAll(Arrays.asList(ip3));
+		p3.getItens().addAll(Arrays.asList(ip2));
+		
+		itemPedidoRepository.saveAll(Arrays.asList(ip1,ip2,ip3));
 	}
 }
