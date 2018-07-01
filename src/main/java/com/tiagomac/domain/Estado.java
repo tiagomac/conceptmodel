@@ -21,7 +21,7 @@ public class Estado implements Serializable {
 	private Integer id;
 	private String nome;
 
-	@JsonBackReference
+	@JsonBackReference // estado não vai guardar cidade para evitar referência cíclica
 	@OneToMany(mappedBy="estado")
 	private List<Cidade> cidades = new ArrayList<>();
 
