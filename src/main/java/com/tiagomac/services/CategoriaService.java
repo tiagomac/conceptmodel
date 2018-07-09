@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.tiagomac.domain.Categoria;
+import com.tiagomac.dto.CategoriaDTO;
 import com.tiagomac.repositories.CategoriaRepository;
 import com.tiagomac.services.exceptions.DataIntegrityException;
 import com.tiagomac.services.exceptions.ObjectNotFoundException;
@@ -55,5 +56,8 @@ public class CategoriaService {
 		return repo.findAll(pageResquest);
 	}
 	
+	public Categoria fromDTO(CategoriaDTO objDto) {
+		return new Categoria(objDto.getId(), objDto.getNome());
+	}
 	
 }
