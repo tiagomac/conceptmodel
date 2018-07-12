@@ -28,7 +28,7 @@ public class ClienteService {
 				"Objeto não encontrado! ID: " + id + ", Tipo: " + Cliente.class.getName()));
 
 	}
-	
+
 	public Cliente update(Cliente obj) {
 		Cliente newObj = find(obj.getId());
 		updateData(newObj, obj);
@@ -47,19 +47,19 @@ public class ClienteService {
 	public List<Cliente> findAll() {
 		return repo.findAll();
 	}
-	
-	public Page<Cliente> findPage(Integer page, Integer linesPerPage, String orderBy, String direction){
+
+	public Page<Cliente> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
 		PageRequest pageResquest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		return repo.findAll(pageResquest);
 	}
-	
+
 	public Cliente fromDTO(ClienteDTO objDto) {
 		return new Cliente(objDto.getId(), objDto.getNome(), objDto.getEmail(), null, null);
 	}
-	
+
 	private void updateData(Cliente newObj, Cliente obj) {
 		newObj.setNome(obj.getNome());
 		newObj.setEmail(obj.getEmail());
-		
+
 	}
 }

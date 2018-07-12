@@ -49,7 +49,5 @@ public class StandardError implements Serializable {
 	public void setException(String exception) {
 		this.exception = exception;
 	}
-	
-	
 
 }
