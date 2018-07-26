@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import com.tiagomac.services.DBService;
+import com.tiagomac.services.EmailService;
+import com.tiagomac.services.SmtpEmailService;
 
 @Configuration
 @Profile("dev") // notifica que todos os beans só serão ativados quando o profile ativo por test
@@ -27,5 +29,10 @@ public class DevConfig {
 		}
 		dbService.instantiateTestDatabase();
 		return true;
+	}
+	
+	@Bean
+	public EmailService emailService() {
+		return new SmtpEmailService();
 	}
 }
