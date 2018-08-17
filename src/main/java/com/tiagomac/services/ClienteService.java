@@ -15,11 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tiagomac.domain.Cidade;
 import com.tiagomac.domain.Cliente;
 import com.tiagomac.domain.Endereco;
+import com.tiagomac.domain.enums.Perfil;
 import com.tiagomac.domain.enums.TipoCliente;
 import com.tiagomac.dto.ClienteDTO;
 import com.tiagomac.dto.ClienteNewDTO;
 import com.tiagomac.repositories.ClienteRepository;
 import com.tiagomac.repositories.EnderecoRepository;
+import com.tiagomac.security.UserSS;
+import com.tiagomac.services.exceptions.AuthorizationException;
 import com.tiagomac.services.exceptions.DataIntegrityException;
 import com.tiagomac.services.exceptions.ObjectNotFoundException;
 
@@ -36,6 +39,12 @@ public class ClienteService {
 	private BCryptPasswordEncoder pe; 
 
 	public Cliente find(Integer id) {
+		
+		UserSS user = UserService.authenticated();
+		if (user == null || user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+			throw new AuthorizationException("Acesso negado");
+		}
+		
 		Optional<Cliente> obj = repo.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto não encontrado! ID: " + id + ", Tipo: " + Cliente.class.getName()));
