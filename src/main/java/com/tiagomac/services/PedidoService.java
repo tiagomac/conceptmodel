@@ -4,9 +4,13 @@ import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.tiagomac.domain.Cliente;
 import com.tiagomac.domain.ItemPedido;
 import com.tiagomac.domain.PagamentoComBoleto;
 import com.tiagomac.domain.Pedido;
@@ -15,6 +19,8 @@ import com.tiagomac.repositories.ItemPedidoRepository;
 import com.tiagomac.repositories.PagamentoRepository;
 import com.tiagomac.repositories.PedidoRepository;
 import com.tiagomac.repositories.ProdutoRepository;
+import com.tiagomac.security.UserSS;
+import com.tiagomac.services.exceptions.AuthorizationException;
 import com.tiagomac.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -71,4 +77,15 @@ public class PedidoService {
 		emailService.sendOrderConfirmationHtmlEmail(obj);
 		return obj;
 	}
+	
+	public Page<Pedido> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
+		UserSS user = UserService.authenticated();
+		if (user == null) {
+			throw new AuthorizationException("Acesso negado");
+		}
+		PageRequest pageResquest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		Cliente cliente = clienteService.find(user.getId());
+		return repo.findByCliente(cliente, pageResquest);
+	}
+	
 }
