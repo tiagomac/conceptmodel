@@ -11,8 +11,8 @@ import com.tiagomac.repositories.ClienteRepository;
 import com.tiagomac.security.UserSS;
 
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService{
-	
+public class UserDetailsServiceImpl implements UserDetailsService {
+
 	@Autowired
 	private ClienteRepository repo;
 

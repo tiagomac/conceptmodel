@@ -27,59 +27,48 @@ import com.tiagomac.security.JWTUtil;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-	
+
 	@Autowired
 	private UserDetailsService userDetailsService;
-	
+
 	@Autowired
 	private Environment env;
 
 	@Autowired
 	private JWTUtil jwtUtil;
-	
-	private static final String[] PUBLIC_MATCHERS = {
-			"/h2-console/**"
-	};
-	
-	private static final String[] PUBLIC_MATCHERS_GET = { 
-			"/produtos/**",
-			"/categorias/**",
-			"/estados/**"
-	};
-	
-	private static final String[] PUBLIC_MATCHERS_POST = { 
-			"/clientes/**",
-			"/auth/forgot/**"
-	};
-	
+
+	private static final String[] PUBLIC_MATCHERS = { "/h2-console/**" };
+
+	private static final String[] PUBLIC_MATCHERS_GET = { "/produtos/**", "/categorias/**", "/estados/**" };
+
+	private static final String[] PUBLIC_MATCHERS_POST = { "/clientes/**", "/auth/forgot/**" };
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		
-		//permitir o acesso ao h2-console no profile test.
+
+		// permitir o acesso ao h2-console no profile test.
 		if (Arrays.asList(env.getActiveProfiles()).contains("test")) {
 			http.headers().frameOptions().disable();
 		}
-		
-		//desabilitamos o csrf por ele não ser necessário aqui, já que o backend é stateless.
+
+		// desabilitamos o csrf por ele não ser necessário aqui, já que o backend é
+		// stateless.
 		http.cors().and().csrf().disable();
-		http.authorizeRequests()
-			.antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
-			.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll()
-			.antMatchers(PUBLIC_MATCHERS).permitAll()
-			.anyRequest().authenticated();
+		http.authorizeRequests().antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
+				.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll().antMatchers(PUBLIC_MATCHERS).permitAll()
+				.anyRequest().authenticated();
 		// adicionamos o filtro de autenticação.
 		http.addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil));
 		http.addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtUtil, userDetailsService));
-		//informa ao backend que ele não vai criar sessão do usuário.
+		// informa ao backend que ele não vai criar sessão do usuário.
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
-	
+
 	@Override
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetailsService).passwordEncoder(bCryptoPasswordEncoder());
 	}
-	
+
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration().applyPermitDefaultValues();
@@ -88,7 +77,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
 	}
-	
+
 	@Bean
 	public BCryptPasswordEncoder bCryptoPasswordEncoder() {
 		return new BCryptPasswordEncoder();

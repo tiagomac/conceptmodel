@@ -17,10 +17,10 @@ import com.tiagomac.repositories.ClienteRepository;
 import com.tiagomac.resources.exception.FieldMessage;
 
 public class ClienteUpdateValidator implements ConstraintValidator<ClienteUpdate, ClienteDTO> {
-	
+
 	@Autowired
 	private HttpServletRequest request;
-	
+
 	@Autowired
 	private ClienteRepository repo;
 
@@ -30,20 +30,21 @@ public class ClienteUpdateValidator implements ConstraintValidator<ClienteUpdate
 
 	@Override
 	public boolean isValid(ClienteDTO objDto, ConstraintValidatorContext context) {
-		
-		//Esse trecho de código pega o ID passado na URI.
+
+		// Esse trecho de código pega o ID passado na URI.
 		@SuppressWarnings("unchecked")
-		Map<String, String> map = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+		Map<String, String> map = (Map<String, String>) request
+				.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 		@SuppressWarnings("unused")
 		Integer uriId = Integer.parseInt(map.get("id"));
-		
+
 		List<FieldMessage> list = new ArrayList<>(); // inclua os testes aqui, inserindo erros na lista
-		
+
 		Cliente aux = repo.findByEmail(objDto.getEmail());
 		if (aux != null && !aux.getId().equals(uriId)) {
 			list.add(new FieldMessage("email", "Email já existente"));
 		}
-		
+
 		for (FieldMessage e : list) {
 			context.disableDefaultConstraintViolation();
 			context.buildConstraintViolationWithTemplate(e.getMessage()).addPropertyNode(e.getFieldName())
@@ -51,6 +52,5 @@ public class ClienteUpdateValidator implements ConstraintValidator<ClienteUpdate
 		}
 		return list.isEmpty();
 	}
-	
-	
+
 }

@@ -46,5 +46,5 @@ public class ResourceExceptionHandler {
 				e.getClass().getName());
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(err);
 	}
-	
+
 }

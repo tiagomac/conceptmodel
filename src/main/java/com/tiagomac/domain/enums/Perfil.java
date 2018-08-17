@@ -4,9 +4,8 @@ import java.util.Arrays;
 
 public enum Perfil {
 
-	//o framework exige o nome "role".
-	ADMIN(1, "ROLE_ADMIN"),
-	CLIENTE(2, "ROLE_CLINETE");
+	// o framework exige o nome "role".
+	ADMIN(1, "ROLE_ADMIN"), CLIENTE(2, "ROLE_CLINETE");
 
 	private int cod;
 	private String descricao;

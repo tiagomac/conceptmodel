@@ -28,23 +28,23 @@ import com.tiagomac.services.exceptions.ObjectNotFoundException;
 
 @Service
 public class ClienteService {
-	
+
 	@Autowired
 	private ClienteRepository repo;
 
 	@Autowired
 	private EnderecoRepository enderecoRepository;
-	
+
 	@Autowired
-	private BCryptPasswordEncoder pe; 
+	private BCryptPasswordEncoder pe;
 
 	public Cliente find(Integer id) {
-		
+
 		UserSS user = UserService.authenticated();
 		if (user == null || user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
 			throw new AuthorizationException("Acesso negado");
 		}
-		
+
 		Optional<Cliente> obj = repo.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto não encontrado! ID: " + id + ", Tipo: " + Cliente.class.getName()));

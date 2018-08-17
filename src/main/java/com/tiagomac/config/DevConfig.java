@@ -15,13 +15,13 @@ import com.tiagomac.services.SmtpEmailService;
 @Configuration
 @Profile("dev") // notifica que todos os beans só serão ativados quando o profile ativo por test
 public class DevConfig {
-	
+
 	@Autowired
 	private DBService dbService;
-	
+
 	@Value("${spring.jpa.hibernate.ddl-auto}") // recupera o valor dessa chave do application-dev.properties
 	private String strategy;
-	
+
 	@Bean
 	public boolean instantiateDatabase() throws ParseException {
 		if (!"create".equals(strategy)) {
@@ -30,7 +30,7 @@ public class DevConfig {
 		dbService.instantiateTestDatabase();
 		return true;
 	}
-	
+
 	@Bean
 	public EmailService emailService() {
 		return new SmtpEmailService();

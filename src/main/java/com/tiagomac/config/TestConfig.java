@@ -14,7 +14,7 @@ import com.tiagomac.services.MockEmailService;
 @Configuration
 @Profile("test") // notifica que todos os beans só serão ativados quando o profile ativo por test
 public class TestConfig {
-	
+
 	@Autowired
 	private DBService dbService;
 
@@ -23,10 +23,10 @@ public class TestConfig {
 		dbService.instantiateTestDatabase();
 		return true;
 	}
-	
+
 	@Bean
 	public EmailService emailService() {
 		return new MockEmailService();
 	}
-	
+
 }
