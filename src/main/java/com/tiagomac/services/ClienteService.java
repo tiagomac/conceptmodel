@@ -2,6 +2,7 @@ package com.tiagomac.services;
 
 import java.awt.image.BufferedImage;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
@@ -155,7 +156,14 @@ public class ClienteService {
 		
 		
 		String fileName = prefix + user.getId() + ".jpg";
-		return s3service.uploadFile(imageService.getInputStream(jpgImage, "jpg"), fileName, "image");
+//		return s3service.uploadFile(imageService.getInputStream(jpgImage, "jpg"), fileName, "image");
+		try {
+			return new URI("");
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

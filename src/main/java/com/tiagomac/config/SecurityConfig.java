@@ -10,6 +10,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -36,6 +37,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private JWTUtil jwtUtil;
+	
+	private static final String[] AUTH_WHITELIST = {
+            // -- swagger ui
+            "/swagger-resources/**",
+            "/swagger-ui.html",
+            "/v2/api-docs",
+            "/webjars/**"
+    };
 
 	private static final String[] PUBLIC_MATCHERS = { "/h2-console/**" };
 
@@ -54,14 +63,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		// desabilitamos o csrf por ele não ser necessário aqui, já que o backend é
 		// stateless.
 		http.cors().and().csrf().disable();
-		http.authorizeRequests().antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
-				.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll().antMatchers(PUBLIC_MATCHERS).permitAll()
-				.anyRequest().authenticated();
+		http.authorizeRequests()
+			.antMatchers(AUTH_WHITELIST).permitAll()
+			.antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
+			.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll().antMatchers(PUBLIC_MATCHERS).permitAll()
+			.anyRequest().authenticated();
 		// adicionamos o filtro de autenticação.
 		http.addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil));
 		http.addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtUtil, userDetailsService));
 		// informa ao backend que ele não vai criar sessão do usuário.
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+	}
+	
+	public void configure(WebSecurity web) throws Exception {
+		web.ignoring().antMatchers("/v2/api-docs", "/configuration/ui"
+				,"swagger-resources/**", "configuration/**"
+				, "/swagger-ui.html", "/webjars/**");
 	}
 
 	@Override
